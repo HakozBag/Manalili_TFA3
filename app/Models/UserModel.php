@@ -16,19 +16,21 @@ class UserModel extends Model
     protected $allowedFields    = [
         'username',
         'full_name',
+        'avatar',
     ];
 
     protected bool $allowEmptyInserts = false;
-    protected bool $updateOnlyChanged = true;
+    protected bool $updateOnlyChanged = false;
 
     protected array $casts = [];
     protected array $castHandlers = [];
 
     // Dates & Timestamps
-    protected $useTimestamps = true; 
+    protected $useTimestamps = false; 
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
-    protected $updatedField  = '';     protected $deletedField  = 'deleted_at';
+    protected $updatedField  = 'updated_at';     
+    protected $deletedField  = 'deleted_at';
 
     // Validation
     protected $validationRules      = [];

@@ -16,7 +16,6 @@ class CustomerModel extends Model
             'full_name',
             'email',
             'phone',
-            'created_at',
     ];
 
     protected bool $allowEmptyInserts = false;

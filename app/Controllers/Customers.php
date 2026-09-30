@@ -15,5 +15,87 @@ class Customers extends BaseController
         return view('customers', [
             'customers' => $customers
         ]);
+        
     }
+    
+    public function new()
+    {
+        return view('customers/new');
+    }
+
+    public function create()
+    {
+        $rules = [
+            'full_name' => 'required|min_length[2]|max_length[100]',
+            'email'     => 'required|valid_email|is_unique[customers.email]',
+            'phone'     => 'permit_empty|numeric|min_length[7]|max_length[20]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors());
+        }
+
+        $customerModel = new CustomerModel();
+
+        $customerModel->insert([
+            'full_name' => $this->request->getPost('full_name'),
+            'email'     => $this->request->getPost('email'),
+            'phone'     => $this->request->getPost('phone'),
+        ]);
+
+        return redirect()->to(site_url('customers'));
+    }
+
+    public function edit($id)
+    {
+        $customerModel = new CustomerModel();
+
+        $customer = $customerModel->find($id);
+
+        if (! $customer) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound(
+                'Customer not found'
+            );
+        }
+
+        return view('customers/edit', [
+            'customer' => $customer
+        ]);
+    }
+
+    public function update($id)
+    {
+        $customerModel = new CustomerModel();
+
+        $customer = $customerModel->find($id);
+
+        if (! $customer) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound(
+                'Customer not found'
+            );
+        }
+
+        $rules = [
+            'full_name' => 'required|min_length[2]|max_length[100]',
+            'email'     => "required|valid_email|is_unique[customers.email,id,$id]",
+            'phone'     => 'permit_empty|numeric|min_length[7]|max_length[20]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors());
+        }
+
+        $customerModel->update($id, [
+            'full_name' => $this->request->getPost('full_name'),
+            'email'     => $this->request->getPost('email'),
+            'phone'     => $this->request->getPost('phone'),
+        ]);
+
+        return redirect()->to(site_url('customers'));
+    }
+
 }
